@@ -1,25 +1,6 @@
 import pytest
 from playwright.sync_api import Playwright, sync_playwright, expect
-
-# Fixture to set up Playwright instance
-@pytest.fixture(scope="session")
-def playwright_instance():
-    with sync_playwright() as playwright:
-        yield playwright
-
-# Fixture to set up a browser instance
-@pytest.fixture(scope="session")
-def browser(playwright_instance: Playwright):
-    browser = playwright_instance.chromium.launch(headless=False)  # Set headless=True for headless mode
-    yield browser
-    browser.close()
-
-# Fixture to set up a browser context
-@pytest.fixture(scope="session")
-def context(browser):
-    context = browser.new_context()
-    yield context
-    context.close()
+from .utils import navigate_and_wait  # Ensure this import statement is correct
 
 # Fixture to navigate to the page and wait for it to load
 @pytest.fixture(scope="session")
@@ -29,19 +10,6 @@ def page(context):
     yield page
     page.close()
 
-
-# Helper function for navigation and waiting
-def navigate_and_wait(page, url, timeout=10000):
-    try:
-        page.goto(url, timeout=timeout)  # Set a timeout for page navigation
-        page.wait_for_load_state("networkidle", timeout=timeout)  # Set a timeout for load state
-        print(f"Page {url} loaded successfully.")
-    except TimeoutError as e:
-        print(f"Page loading timed out: {e}")
-        pytest.fail(f"Test failed due to timeout: {e}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        pytest.fail(f"Test failed due to an unexpected error: {e}")
 
 # Test functions using the pre-loaded page fixture
 def test_example_page_title(page):
