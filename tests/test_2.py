@@ -106,7 +106,7 @@ def test_6() -> None: # Fail
 # much code
     except AssertionError as e:
         print("STEP FAILED:", e)
-        pytest.fail("FATAL ERROR WITH PYTEST EXIT")
+        pytest.fail("FATAL ERROR WITH PYTEST EXIT", pytrace=False)
         pytest.exit("FATAL ERROR WITH PYTEST EXIT", returncode=1)
         print("EXIT IS NOT OK!!!!!!!!!!!!!!!!")
         exit(0);
