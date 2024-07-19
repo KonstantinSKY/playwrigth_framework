@@ -1,24 +1,19 @@
 import pytest
 from playwright.sync_api import Playwright, sync_playwright, expect
 
+FATAL_ERROR = False;
 
 def test_1() -> None: # Pass
 
     assert 1 == 1
     assert 2 == 2
     assert 3 == 3
-# assert text
-# expect(1).toBe(1)
-# expect(1).toBe(1)
-# expect(1).toBe(1)
 
 
 @pytest.mark.xfail
 def test_2() -> None: # Fail manually
 
-# expect(1).toBe(1)
-# expect(1).toBe(1)
-# expect(1).toBe(1)
+
     assert 1 == 1
     assert 2 == 2
     assert 1 == 2 + 4 - 8
@@ -77,49 +72,53 @@ def test_4() -> None:  # Fail
         pytest.fail("; ".join(errors))
 
 
-#
+
+# Pass the step and continue with next steps. This is when we just pass a warning message and continue
 def test_5() -> None: # Pass
 
     assert 1 == 1
     assert 2 == 2
     try:
         assert 1 == 2
-# much code
     except AssertionError as e:
-# much code
         print(" Warning Assertion 2 Error: ", e)
+    assert 2 == 2
+    assert 1 == 1
 
-# # Pass the step and continue with next steps. This is when we just pass a warning message and continue
-
-assert 1 == 1
 
 
 def test_6() -> None: # Fail
+    global FATAL_ERROR
     print("STEP continue :1")
     assert 1 == 1
 
-# Fail and Stop test execution
-# Stop Program
-    print("STEP continue :1!!! FATAL ERROR TEST")
     try:
-        assert 1 == 2, "Fatal Error"
-# much code
-    except AssertionError as e:
-        print("STEP FAILED:", e)
-        pytest.fail("FATAL ERROR WITH PYTEST EXIT", pytrace=False)
-        pytest.exit("FATAL ERROR WITH PYTEST EXIT", returncode=1)
-        print("EXIT IS NOT OK!!!!!!!!!!!!!!!!")
-        exit(0);
-# 0 - exit without an error
-# 1 exit with the error
+        assert 1 == 2
+    except AssertionError:
+        FATAL_ERROR = True
+        pytest.fail("Failure.")
+
+    print("Continuing after  failure.")
+
+    # Final part of the test
+    print("This code runs after the second failure.")
+
     print("STEP continue :3")
     assert 1 == 1
     print("STEP continue :4")
     assert 2 == 1
-
+    print("STEP continue :5")
+    assert 1 == 4
 
 #Just for checking EXITING 
+
+def fatal_stop():
+    global FATAL_ERROR;
+    if FATAL_ERROR:
+        pytest.exit("FATAL ERROR detected, stopping further tests.", 1)
+
 def test_7() -> None: # Pass
+    fatal_stop()
     print("STEP 1 just for checking")
     assert 1 == 1
     assert 2 == 1

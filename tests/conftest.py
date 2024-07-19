@@ -32,3 +32,5 @@ def navigate_and_wait(page, url, timeout=10000):
     except Exception as e:
         print(f"An error occurred: {e}")
         pytest.fail(f"Test failed due to an unexpected error: {e}")
+
+
