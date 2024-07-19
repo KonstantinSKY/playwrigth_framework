@@ -1,41 +1,44 @@
 import pytest
 from playwright.sync_api import Playwright, sync_playwright, expect
 
-FATAL_ERROR = False;
+# Global variable to track fatal errors
+FATAL_ERROR = False
 
-def test_1() -> None: # Pass
-
+def test_1() -> None:
+    """
+    A test that passes.
+    """
     assert 1 == 1
     assert 2 == 2
     assert 3 == 3
 
-
 @pytest.mark.xfail
-def test_2() -> None: # Fail manually
-
-
+def test_2() -> None:
+    """
+    A test that is expected to fail.
+    """
     assert 1 == 1
     assert 2 == 2
-    assert 1 == 2 + 4 - 8
-# Push to Fail
+    assert 1 == 2 + 4 - 8  # This will fail
 
-
-def test_3() -> None: # Fail
-# # Fail and Stop test3 and continue with next tests
+def test_3() -> None:
+    """
+    A test that fails partway through and continues with the remaining steps.
+    """
     assert 1 == 1
     print("STEP continue :0")
-    assert 1 == 2
- # Fail and Stop test3 and continue with next tests
+    assert 1 == 2  # This will fail
+    # Code below will not run because of the previous failure
     print("STEP continue :1")
     assert 1 == 1
     print("STEP continue :2")
     assert 2 == 2
 
-
-def test_4() -> None:  # Fail
+def test_4() -> None:
+    """
+    A test that collects multiple failures and fails at the end.
+    """
     errors = []
-
-    # Fail the test and continue with next steps
 
     # Zero assert
     print("\nSTEP continue :0")
@@ -51,14 +54,12 @@ def test_4() -> None:  # Fail
         print("TEST FAIL Assertion 1 Error")
         errors.append("Assertion 1 failed")
 
-
     # Second assert
     print("STEP continue :2")
     step_2_passed = (2 == 5)
     if not step_2_passed:
         print("TEST FAIL Assertion 2 Error")
         errors.append("Assertion 2 failed")
-
 
     # Third assert
     print("STEP continue :3")
@@ -71,38 +72,36 @@ def test_4() -> None:  # Fail
     if errors:
         pytest.fail("; ".join(errors))
 
-
-
-# Pass the step and continue with next steps. This is when we just pass a warning message and continue
-def test_5() -> None: # Pass
-
+def test_5() -> None:
+    """
+    A test that passes with a warning message.
+    """
     assert 1 == 1
     assert 2 == 2
     try:
-        assert 1 == 2
+        assert 1 == 2  # This will fail but is caught as a warning
     except AssertionError as e:
         print(" Warning Assertion 2 Error: ", e)
     assert 2 == 2
     assert 1 == 1
 
-
-
-def test_6() -> None: # Fail
+def test_6() -> None:
+    """
+    A test that sets a fatal error flag and stops further tests if a failure occurs.
+    """
     global FATAL_ERROR
     print("STEP continue :1")
     assert 1 == 1
 
     try:
-        assert 1 == 2
+        assert 1 == 2  # This will fail and set the fatal error flag
     except AssertionError:
         FATAL_ERROR = True
         pytest.fail("Failure.")
 
-    print("Continuing after  failure.")
-
-    # Final part of the test
+    print("Continuing after failure.")
+    # The following lines will not execute if the above fail triggers exit
     print("This code runs after the second failure.")
-
     print("STEP continue :3")
     assert 1 == 1
     print("STEP continue :4")
@@ -110,15 +109,19 @@ def test_6() -> None: # Fail
     print("STEP continue :5")
     assert 1 == 4
 
-#Just for checking EXITING 
-
 def fatal_stop():
-    global FATAL_ERROR;
+    """
+    Stops the test suite if a fatal error has been detected.
+    """
+    global FATAL_ERROR
     if FATAL_ERROR:
         pytest.exit("FATAL ERROR detected, stopping further tests.", 1)
 
-def test_7() -> None: # Pass
+def test_7() -> None:
+    """
+    A test that checks for fatal errors before running.
+    """
     fatal_stop()
     print("STEP 1 just for checking")
     assert 1 == 1
-    assert 2 == 1
+    assert 2 == 1  # This will fail if it runs, but shouldn't if fatal_stop is triggered
