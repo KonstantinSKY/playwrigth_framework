@@ -77,6 +77,8 @@ def test_dropdown(page):
     )
     print(f"Locator for {options_to_test[1]}: {option_locator}")
     option_value = option_locator.get_attribute("value")
+
+
     print(f"Option with partial text '{options_to_test[1]}' has value: {option_value}")
     dropdown_locator.select_option(option_value)
 
@@ -88,11 +90,11 @@ def test_dropdown(page):
         selected_option_text == options_to_test[1]
     ), f"Expected '{options_to_test[1]}' but got '{selected_option_text}'"
 
-    selected_option_value = selected_option_locator.value()
+    selected_option_value = selected_option_locator.get_attribute('value')
     print("Selected options by value:", selected_option_value)
     assert (
-        selected_option_value == options_value
-    ), f"Expected '{options_to_value}' but got '{selected_option_value}'"
+        selected_option_value == option_value
+    ), f"Expected '{option_value}' but got '{selected_option_value}'"
 
     # dropdown_locator.select_option(label = " Drop Down Item 2 ")
 
